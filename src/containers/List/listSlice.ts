@@ -1,7 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
-import { fetchTasks } from "./listThunks"
+import { deleteTask, fetchTasks, postTasks, updateTasks } from "./listThunks"
 
-interface Task {
+
+export interface Task {
     status: boolean,
     task: string
 }
@@ -23,9 +24,17 @@ export const listSlice = createSlice({
         }
     },
     extraReducers: (builder) => {
+        builder.addCase(fetchTasks.pending, (state) => {
+            state.loading = true
+        })
         builder.addCase(fetchTasks.fulfilled, (state, action) => {
             const data = action.payload;
             state.tasks = [...state.tasks, ...Object.values(data)];
+            state.loading = false
+        })
+        builder.addCase(postTasks.fulfilled, (state, action) => {
+            const newTask = action.payload;
+            state.tasks = [...state.tasks, newTask];
         })
     }
 })
